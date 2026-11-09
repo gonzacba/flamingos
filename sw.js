@@ -1,5 +1,5 @@
 // Bump VERSION whenever you upload a changed index.html.
-const VERSION = "flamingos-v5";
+const VERSION = "flamingos-v6";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

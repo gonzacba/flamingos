@@ -65,12 +65,14 @@ a{color:var(--pink-ink)}
 .status[data-state="on"]{--led:#22c55e;--led-glow:rgba(34,197,94,.55);border-color:var(--turf)}
 .status[data-state="cancelled"]{--led:#ef4444;--led-glow:rgba(239,68,68,.6);border-color:#ef4444}
 .status[data-state="delayed"]{--led:#f59e0b;--led-glow:rgba(245,158,11,.55);border-color:#f59e0b}
-.st-row{display:flex;gap:14px;align-items:center}
-.led{flex:none;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85) 0 12%,var(--led) 45%);box-shadow:0 0 0 3px var(--surface),0 0 0 4px var(--line),0 0 18px 4px var(--led-glow)}
+.st-row{display:flex;gap:12px;align-items:flex-start}
+.st-row .led{margin-top:20px}
+.led{flex:none;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85) 0 12%,var(--led) 45%);box-shadow:0 0 0 3px var(--surface),0 0 0 4px var(--line),0 0 18px 4px var(--led-glow)}
 .st-text{min-width:0}
 .st-text p{margin:0}
 .st-eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.st-label{font-family:var(--display);font-weight:900;font-size:30px;line-height:1;text-transform:uppercase;margin-top:3px!important}
+.st-label{font-family:var(--display);font-weight:900;font-size:clamp(24px,5.5vw,32px);line-height:1;text-transform:uppercase;margin-top:3px!important}
+.st-msg{font-size:15px;font-weight:600;color:var(--ink);margin-top:8px!important;padding:8px 12px;border-radius:10px;background:var(--bg);border-left:3px solid var(--led)}
 .status[data-state="cancelled"] .st-label{color:#dc2626}
 .st-note{font-size:13.5px;color:var(--muted);margin-top:4px!important}
 .st-phone{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:12px}
@@ -146,6 +148,7 @@ summary{cursor:pointer;font-weight:700}
       <div class="st-text">
         <p class="st-eyebrow" id="st-h">Field status · <span id="st-event">next practice or game</span></p>
         <p class="st-label" id="st-label">No update yet</p>
+        <p class="st-msg" id="st-msg" hidden></p>
         <p class="st-note" id="st-note">Call the field line to confirm before you leave.</p>
       </div>
     </div>
@@ -321,7 +324,9 @@ async function loadStatus(){
     const lm=r.headers.get("last-modified");statusTime=lm?new Date(lm):null}
   catch(e){statusStale=true}
   renderStatus()}
-const fmtTime=d=>d.toLocaleString("en-US",{timeZone:"America/New_York",weekday:"short",hour:"numeric",minute:"2-digit"});
+// "Mon 11/9 10:20 AM" in Eastern time
+const fmtTime=d=>{const o={};new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"}).formatToParts(d).forEach(p=>o[p.type]=p.value);
+  return `${o.weekday} ${o.month}/${o.day} ${o.hour}:${o.minute} ${o.dayPeriod}`};
 // ---- Snacks: family names from snacks.json (copied from SignUpGenius by the team manager)
 let snacks={};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -342,14 +347,16 @@ function renderStatus(){
   const kind=e?(e===nextP?"practice":"game"):null;
   document.getElementById("st-event").textContent=e?`${DOW[e.dow]} ${MON[e.m-1]} ${e.dd} ${kind}`:"no upcoming events";
   const key=e?`${e.y}-${p2(e.m)}-${p2(e.dd)}`:"";
-  let st="unknown",label="No update yet",note="Call the field line to confirm before you leave.";
+  let st="unknown",label="No update yet",note="Call the field line to confirm before you leave.",msg="";
   if(statusData&&e&&statusData.date===key){
     const s=String(statusData.status||"").trim().toLowerCase();
     if(s==="on"||s==="open"){st="on";label=kind==="game"?"Game is on":"Practice is on"}
     else if(s==="cancelled"||s==="canceled"||s==="closed"){st="cancelled";label=kind==="game"?"Game cancelled":"Practice cancelled"}
     else if(s==="delayed"){st="delayed";label="Delayed"}
-    if(st!=="unknown"){note=(statusData.note?statusData.note+" · ":"")+(statusTime?"Updated "+fmtTime(statusTime):"Set by the team manager")}
+    msg=String(statusData.message||statusData.note||"").trim();
+    if(st!=="unknown"||msg){note=statusTime?"Updated "+fmtTime(statusTime):"Set by the team manager";if(st==="unknown")note+=" · Call the field line to confirm"}
   }
+  const m=document.getElementById("st-msg");m.textContent=msg;m.hidden=!msg;
   if(statusStale&&st!=="unknown")note+=" · You're offline, so this may be out of date";
   box.dataset.state=st;
   document.getElementById("st-label").textContent=label;

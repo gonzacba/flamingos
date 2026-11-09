@@ -13,7 +13,8 @@ SABR BU8 Team 17 Flamingos (Moroco Orthodontics), 2026–27 season.
      - `"cancelled"` → red light
      - `"delayed"` → amber light
      - `"unknown"` → grey light ("No update yet, call the field line")
-   - `"note"`: optional short reason, e.g. `"Lightning in the area"`. Leave `""` for none.
+   - `"message"`: optional short message shown in the box, e.g. `"Veterans Day, but practice still on"`
+     or `"No practice, park closed"`. Leave `""` for none.
 4. Tap **Commit changes**.
 
 Parents see it the next time they open the app, usually within a few minutes.
@@ -27,7 +28,7 @@ Keep the quotes and commas exactly as they are. Example:
 {
   "date": "2026-11-14",
   "status": "cancelled",
-  "note": "Fields closed after heavy rain"
+  "message": "No practice, park closed"
 }
 ```
 
