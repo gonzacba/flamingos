@@ -11,16 +11,16 @@
 :root{
   --bg:#fbf6f5; --surface:#ffffff; --ink:#1d1b1c; --muted:#6f6467; --line:#eadfe0;
   --pink:#e2557f; --pink-ink:#b8325b; --pink-soft:#fde6ed;
-  --turf:#1f6b45; --turf-soft:#e3f1e8;
+  --turf:#1f6b45; --turf-soft:#e3f1e8; --turf-strong:#1f6b45;
   --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#171314; --surface:#221c1e; --ink:#f4eced; --muted:#b0a2a6; --line:#3a3033;
-  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; color-scheme:dark}}
+  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; --turf-strong:#237a4f; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#171314; --surface:#221c1e; --ink:#f4eced; --muted:#b0a2a6; --line:#3a3033;
-  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; color-scheme:dark}
+  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; --turf-strong:#237a4f; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
 .wrap{max-width:720px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
@@ -36,7 +36,8 @@ a{color:var(--pink-ink)}
 
 /* ticket */
 .ticket{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -18px rgba(120,30,60,.35)}
-.ticket-top{background:var(--pink);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.upnext{display:flex;flex-direction:column;gap:22px}
+.ticket-top{background:var(--tk,var(--pink));color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .ticket-top .lbl{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
 .count{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.03em}
 .ticket-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
@@ -54,6 +55,37 @@ a{color:var(--pink-ink)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;font:600 14px var(--body);text-decoration:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .btn:hover{border-color:var(--pink)}
 .btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ticket.prac{--tk:var(--turf-strong)}
+.ticket.prac .when .time{color:var(--turf)}
+.btn.snack{background:var(--pink);border-color:var(--pink);color:#fff}
+.btn.turf{background:var(--turf-strong);border-color:var(--turf-strong);color:#fff}
+.note{font-size:13px;color:var(--muted);padding:0 18px 16px;margin:0}
+/* field status */
+.status{--led:#9a9094;--led-glow:rgba(154,144,148,.0);background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.status[data-state="on"]{--led:#22c55e;--led-glow:rgba(34,197,94,.55);border-color:var(--turf)}
+.status[data-state="cancelled"]{--led:#ef4444;--led-glow:rgba(239,68,68,.6);border-color:#ef4444}
+.status[data-state="delayed"]{--led:#f59e0b;--led-glow:rgba(245,158,11,.55);border-color:#f59e0b}
+.st-row{display:flex;gap:14px;align-items:center}
+.led{flex:none;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.85) 0 12%,var(--led) 45%);box-shadow:0 0 0 3px var(--surface),0 0 0 4px var(--line),0 0 18px 4px var(--led-glow)}
+.st-text{min-width:0}
+.st-text p{margin:0}
+.st-eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.st-label{font-family:var(--display);font-weight:900;font-size:30px;line-height:1;text-transform:uppercase;margin-top:3px!important}
+.status[data-state="cancelled"] .st-label{color:#dc2626}
+.st-note{font-size:13.5px;color:var(--muted);margin-top:4px!important}
+.st-phone{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:12px}
+.st-phone>div:first-child{display:flex;flex-direction:column}
+.st-ph-lbl{font-size:12px;font-weight:600;color:var(--muted)}
+.st-num{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:.02em;user-select:all;font-variant-numeric:tabular-nums}
+.st-btns{display:flex;gap:8px}
+@media (prefers-reduced-motion:no-preference){.status[data-state="cancelled"] .led{animation:blink 1.4s ease-in-out infinite}@keyframes blink{50%{box-shadow:0 0 0 3px var(--surface),0 0 0 4px var(--line),0 0 4px 0 var(--led-glow)}}}
+/* bring reminder inside each card */
+.bring{margin:0 18px 16px;padding:10px 12px;border-radius:12px;background:var(--pink-soft);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:13.5px}
+.ticket.prac .bring{background:var(--turf-soft)}
+.bring b{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+.bring ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 12px;font-weight:600}
+.bring li::before{content:"✓ ";color:var(--pink-ink)}
+.ticket.prac .bring li::before{color:var(--turf)}
 .toast{font-size:13px;color:var(--turf);font-weight:600;align-self:center}
 
 /* season */
@@ -80,6 +112,10 @@ a{color:var(--pink-ink)}
 .row.past{opacity:.55}
 .row.is-next{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink-soft)}
 .gcal{font-size:12.5px;font-weight:600}
+.snk{font-size:13px;color:var(--ink);margin:2px 0}
+.snk b{font-weight:700}
+.snk.open a{display:inline-block;font-weight:700;font-size:12px;text-decoration:none;color:var(--pink-ink);background:var(--pink-soft);padding:2px 9px;border-radius:999px}
+.snk-open-big{color:var(--pink-ink)}
 .break{padding:9px 12px;border-radius:12px;border:1.5px dashed var(--line);color:var(--muted);font-size:13.5px;font-weight:500}
 
 /* extras */
@@ -104,7 +140,26 @@ summary{cursor:pointer;font-weight:700}
     </div>
   </header>
 
-  <section aria-labelledby="next-h">
+  <section class="status" id="status" data-state="unknown" aria-labelledby="st-h">
+    <div class="st-row">
+      <span class="led" aria-hidden="true"></span>
+      <div class="st-text">
+        <p class="st-eyebrow" id="st-h">Field status · <span id="st-event">next practice or game</span></p>
+        <p class="st-label" id="st-label">No update yet</p>
+        <p class="st-note" id="st-note">Call the field line to confirm before you leave.</p>
+      </div>
+    </div>
+    <div class="st-phone">
+      <div><span class="st-ph-lbl">Rain &amp; lightning field line</span><span class="st-num" id="st-num">(561) 367-7068</span></div>
+      <div class="st-btns">
+        <a class="btn primary" href="tel:+15613677068">Call</a>
+        <button class="btn" id="st-copy" type="button">Copy number</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="upnext">
+  <section aria-labelledby="next-h" id="game-sec">
     <p class="eyebrow" id="next-h">Next game</p>
     <article class="ticket" id="ticket">
       <div class="ticket-top"><span class="lbl" id="t-week">Week 1</span><span class="count" id="t-count">Loading…</span></div>
@@ -112,17 +167,41 @@ summary{cursor:pointer;font-weight:700}
         <div class="when"><span class="day" id="t-day">Sat Nov 7</span><span class="time" id="t-time">12:00 PM</span></div>
         <div class="fact"><dt>Against</dt><dd class="vs" id="t-opp">—</dd></div>
         <div class="fact"><dt>Field</dt><dd id="t-field">—</dd></div>
+        <div class="fact" style="grid-column:1/-1"><dt>Snacks &amp; drinks after the game</dt><dd id="t-snack">—</dd></div>
         <div class="fact" style="grid-column:1/-1"><dt>Park</dt><dd>Spanish River North 1 <span class="small">· Spanish River Athletic Park, Boca Raton</span></dd></div>
       </dl>
+      <div class="bring"><b>Bring</b><ul><li>Shin guards</li><li>Soccer cleats</li><li>Size 3 ball</li><li>Water bottle</li></ul></div>
       <hr class="perf">
       <div class="actions">
         <a class="btn primary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Spanish+River+Athletic+Park+North+Boca+Raton+FL">Directions</a>
+        <a class="btn snack" target="_blank" rel="noopener" href="https://m.signupgenius.com/#!/showSignUp/60B084DAAA72BABFE3-67372024-bu08?useFullSite=false">Snacks &amp; RSVP</a>
         <a class="btn" id="t-gcal" target="_blank" rel="noopener" href="#">Add to Google Calendar</a>
         <button class="btn" id="t-copy" type="button">Copy for group chat</button>
         <span class="toast" id="toast" role="status"></span>
       </div>
+      <p class="note">Use Snacks &amp; RSVP to take an open snack week and say whether your player is coming.</p>
     </article>
   </section>
+
+  <section aria-labelledby="prac-h" id="prac-sec">
+    <p class="eyebrow" id="prac-h">Next practice</p>
+    <article class="ticket prac">
+      <div class="ticket-top"><span class="lbl">Every Wednesday</span><span class="count" id="p-count">Loading…</span></div>
+      <dl class="ticket-body">
+        <div class="when"><span class="day" id="p-day">Wed Nov 11</span><span class="time">6:00 PM</span></div>
+        <div class="fact"><dt>Field</dt><dd>Field No. 8</dd></div>
+        <div class="fact"><dt>Park</dt><dd>Spanish River South 1</dd></div>
+        <div class="fact" style="grid-column:1/-1"><dt>Heads-up</dt><dd>Practice is on the <b>South</b> side of Spanish River Athletic Park. Saturday games are on the North side.</dd></div>
+      </dl>
+      <div class="bring"><b>Bring</b><ul><li>Shin guards</li><li>Soccer cleats</li><li>Size 3 ball</li><li>Water bottle</li></ul></div>
+      <hr class="perf">
+      <div class="actions">
+        <a class="btn turf" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Spanish+River+Athletic+Park+South+Boca+Raton+FL">Directions</a>
+        <a class="btn" id="p-gcal" target="_blank" rel="noopener" href="#">Add every Wednesday to Google Calendar</a>
+      </div>
+    </article>
+  </section>
+  </div>
 
   <section class="season" aria-labelledby="season-h">
     <div class="season-head">
@@ -141,7 +220,7 @@ summary{cursor:pointer;font-weight:700}
   </section>
 
   <p class="foot" id="netline" hidden></p>
-  <p class="foot">Taken from the official <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSZytSNVMYRNaM6EuYizMUoLy114uZ5n2q_JBvyY1B0MFTHiTEwy3TAxC14YmIRo5KLwyr1sVqIdXo1/pubhtml#gid=0" target="_blank" rel="noopener">SABR BU08 schedule</a> as of Nov 7, 2026. All times are Eastern. Schedules can change for weather, so check with the coach or SABR before you head out.</p>
+  <p class="foot">Taken from the official <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSZytSNVMYRNaM6EuYizMUoLy114uZ5n2q_JBvyY1B0MFTHiTEwy3TAxC14YmIRo5KLwyr1sVqIdXo1/pubhtml#gid=0" target="_blank" rel="noopener">SABR BU08 schedule</a> as of Nov 7, 2026. All times are Eastern. Schedules can change for weather, so check with the coach or SABR before you head out. Practice runs every Wednesday at 6:00 PM. Ask the coach about holiday weeks such as Thanksgiving and winter break.</p>
 </div>
 
 <script>
@@ -151,6 +230,7 @@ const GAMES=[[1,"2026-11-07","12:00","Fields 4 & 5",2],[2,"2026-11-14","12:00","
 const BREAKS={"2026-12-05":"No game Nov 28 · Thanksgiving weekend","2027-01-09":"Winter break · no games Dec 19 – Jan 2"};
 const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],MONL=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const GAME_MIN=60;
+const SIGNUP="https://m.signupgenius.com/#!/showSignUp/60B084DAAA72BABFE3-67372024-bu08?useFullSite=false";
 const games=GAMES.map(([w,d,t,f,o])=>{const[y,m,dd]=d.split("-").map(Number),[h,mi]=t.split(":").map(Number);
   // Whole season falls in Eastern Standard Time (UTC-5)
   return{w,y,m,dd,h,mi,f,o,start:Date.UTC(y,m-1,dd,h+5,mi),dow:new Date(Date.UTC(y,m-1,dd)).getUTCDay()}});
@@ -199,7 +279,7 @@ function render(){
     const rematch=g.w===13?' <span class="small">(rematch of week 1)</span>':"";
     html+=`<li class="row${past?" past":""}${isNext?" is-next":""}">
       <div class="date"><b>${g.dd}</b><span>${DOW[g.dow]}</span></div>
-      <div class="mid"><div class="opp">${sw(o[3])}<span>vs ${o[0]}${rematch}</span></div><div class="meta">Wk ${g.w} · ${g.f} · ${o[2]} jerseys</div>${past?"":`<a class="gcal" target="_blank" rel="noopener" href="${gcal(g)}">+ Google Calendar</a>`}</div>
+      <div class="mid"><div class="opp">${sw(o[3])}<span>vs ${o[0]}${rematch}</span></div><div class="meta">Wk ${g.w} · ${g.f} · ${o[2]} jerseys</div>${snackHtml(key,past)}${past?"":`<a class="gcal" target="_blank" rel="noopener" href="${gcal(g)}">+ Google Calendar</a>`}</div>
       <div class="right"><span class="t">${t12(g)}</span>${chip}</div></li>`});
   html+="</ul>";
   document.getElementById("season").innerHTML=html;
@@ -212,9 +292,80 @@ document.getElementById("t-copy").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(txt);toast.textContent="Copied. Paste it in the team chat."}
   catch(e){toast.textContent=txt.replace(/\n/g," · ")}
   setTimeout(()=>toast.textContent="",6000)});
-render();setInterval(render,60000);
+// ---- Practice: every Wednesday 6:00 PM ET, Spanish River South 1, Field 8 (through the last game week)
+const PRACTICE={h:18,mi:0,first:Date.UTC(2026,10,4),last:Date.UTC(2027,1,24),field:"Spanish River South 1 - Field No. 8"};
+const PRAC_MIN=60;
+function nextPractice(now){for(let d=PRACTICE.first;d<=PRACTICE.last;d+=7*864e5){const s=d+(PRACTICE.h+5)*36e5+PRACTICE.mi*6e4;if(now<s+PRAC_MIN*6e4){const x=new Date(d);return{y:x.getUTCFullYear(),m:x.getUTCMonth()+1,dd:x.getUTCDate(),h:PRACTICE.h,mi:PRACTICE.mi,dow:3,start:s}}}return null}
+function pracCal(p){const z=n=>new Date(n).toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const q=new URLSearchParams({action:"TEMPLATE",text:"Flamingos practice",dates:`${z(p.start)}/${z(p.start+PRAC_MIN*6e4)}`,recur:"RRULE:FREQ=WEEKLY;BYDAY=WE;UNTIL=20270225T050000Z",location:"Spanish River Athletic Park South 1 - Field No. 8, Boca Raton, FL",details:"Bring: shin guards, soccer cleats, size 3 soccer ball, water bottle."});
+  return "https://calendar.google.com/calendar/render?"+q}
+let nextP=null;
+function renderPractice(){const now=Date.now();nextP=nextPractice(now);const sec=document.getElementById("prac-sec");
+  if(!nextP){sec.hidden=true;return}
+  sec.hidden=false;
+  document.getElementById("p-day").textContent=`Wed ${MON[nextP.m-1]} ${nextP.dd}`;
+  document.getElementById("p-count").textContent=countdown(nextP,now);
+  document.getElementById("p-gcal").href=pracCal(nextP);
+  // whichever comes first goes on top
+  const gs=document.getElementById("game-sec");
+  gs.style.order=(nextG&&(!nextP||nextG.start<=nextP.start))?0:1; sec.style.order=gs.style.order==0?1:0}
+
+// the soonest upcoming practice or game (used by the field status light)
+function bagEvent(){return [nextG,nextP].filter(Boolean).sort((a,b)=>a.start-b.start)[0]}
+
+// ---- Field status light: read from status.json (edited by the team manager on GitHub)
+let statusData=null,statusStale=false,statusTime=null;
+async function loadStatus(){
+  try{const r=await fetch("status.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;
+    statusData=await r.json();statusStale=r.headers.get("x-flamingos-cached")==="1"||!navigator.onLine;
+    const lm=r.headers.get("last-modified");statusTime=lm?new Date(lm):null}
+  catch(e){statusStale=true}
+  renderStatus()}
+const fmtTime=d=>d.toLocaleString("en-US",{timeZone:"America/New_York",weekday:"short",hour:"numeric",minute:"2-digit"});
+// ---- Snacks: family names from snacks.json (copied from SignUpGenius by the team manager)
+let snacks={};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const keyOf=g=>`${g.y}-${p2(g.m)}-${p2(g.dd)}`;
+function snackName(key){const v=snacks[key];return v&&String(v).trim()?String(v).trim():""}
+function snackHtml(key,past){const n=snackName(key);
+  if(n)return `<div class="snk">Snacks: <b>${esc(n)} family</b></div>`;
+  if(past)return "";
+  return `<div class="snk open"><a target="_blank" rel="noopener" href="${SIGNUP}">Snacks: open · sign up</a></div>`}
+async function loadSnacks(){try{const r=await fetch("snacks.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;snacks=await r.json()||{}}catch(e){}
+  render();renderTicketSnack()}
+function renderTicketSnack(){const el=document.getElementById("t-snack");if(!nextG){el.textContent="—";return}
+  const n=snackName(keyOf(nextG));
+  el.innerHTML=n?`<b>${esc(n)} family</b>`:`<span class="snk-open-big">Open. <a target="_blank" rel="noopener" href="${SIGNUP}">Sign up to bring snacks</a></span>`}
+
+function renderStatus(){
+  const e=bagEvent(),box=document.getElementById("status");
+  const kind=e?(e===nextP?"practice":"game"):null;
+  document.getElementById("st-event").textContent=e?`${DOW[e.dow]} ${MON[e.m-1]} ${e.dd} ${kind}`:"no upcoming events";
+  const key=e?`${e.y}-${p2(e.m)}-${p2(e.dd)}`:"";
+  let st="unknown",label="No update yet",note="Call the field line to confirm before you leave.";
+  if(statusData&&e&&statusData.date===key){
+    const s=String(statusData.status||"").trim().toLowerCase();
+    if(s==="on"||s==="open"){st="on";label=kind==="game"?"Game is on":"Practice is on"}
+    else if(s==="cancelled"||s==="canceled"||s==="closed"){st="cancelled";label=kind==="game"?"Game cancelled":"Practice cancelled"}
+    else if(s==="delayed"){st="delayed";label="Delayed"}
+    if(st!=="unknown"){note=(statusData.note?statusData.note+" · ":"")+(statusTime?"Updated "+fmtTime(statusTime):"Set by the team manager")}
+  }
+  if(statusStale&&st!=="unknown")note+=" · You're offline, so this may be out of date";
+  box.dataset.state=st;
+  document.getElementById("st-label").textContent=label;
+  document.getElementById("st-note").textContent=note}
+document.getElementById("st-copy").addEventListener("click",async()=>{const b=document.getElementById("st-copy");
+  try{await navigator.clipboard.writeText("(561) 367-7068");b.textContent="Copied"}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById("st-num"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected"}
+  setTimeout(()=>b.textContent="Copy number",3000)});
+addEventListener("visibilitychange",()=>{if(!document.hidden)loadStatus()});
+
+render();renderPractice();renderStatus();renderTicketSnack();loadStatus();loadSnacks();
+setInterval(()=>{render();renderPractice();renderStatus();renderTicketSnack()},60000);
+setInterval(()=>{loadStatus();loadSnacks()},5*60000);
+addEventListener("visibilitychange",()=>{if(!document.hidden)loadSnacks()});
+
 function net(){const el=document.getElementById("netline");
-  if(!navigator.onLine){el.hidden=false;el.textContent="You're offline. Showing the saved schedule. Directions and Google Calendar links need a connection."}
+  if(!navigator.onLine){el.hidden=false;el.textContent="You're offline. Showing the saved schedule. The field status light, directions, calendar and Snacks & RSVP links need a connection."}
   else{el.hidden=true}}
 addEventListener("online",net);addEventListener("offline",net);net();
 if("serviceWorker" in navigator&&location.protocol!=="file:"){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
