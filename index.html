@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="theme-color" content="#e2557f"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Flamingos"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Flamingos Game Days</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a matchday program. Ticket-style "next game" card up top, then the season as a fixture list grouped by month. */
+:root{
+  --bg:#fbf6f5; --surface:#ffffff; --ink:#1d1b1c; --muted:#6f6467; --line:#eadfe0;
+  --pink:#e2557f; --pink-ink:#b8325b; --pink-soft:#fde6ed;
+  --turf:#1f6b45; --turf-soft:#e3f1e8;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171314; --surface:#221c1e; --ink:#f4eced; --muted:#b0a2a6; --line:#3a3033;
+  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171314; --surface:#221c1e; --ink:#f4eced; --muted:#b0a2a6; --line:#3a3033;
+  --pink:#f07299; --pink-ink:#ff9ab8; --pink-soft:#3d2029; --turf:#5cc48c; --turf-soft:#1c3327; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+a{color:var(--pink-ink)}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px;border-radius:6px}
+
+/* masthead */
+.mast{display:flex;align-items:center;gap:14px}
+.crest{flex:none;width:56px;height:56px;border-radius:50%;background:var(--pink);display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:.02em}
+.mast h1{margin:0;font-family:var(--display);font-weight:900;font-size:clamp(34px,8vw,48px);line-height:.95;letter-spacing:.01em;text-transform:uppercase}
+.mast p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+
+/* ticket */
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -18px rgba(120,30,60,.35)}
+.ticket-top{background:var(--pink);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.ticket-top .lbl{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.count{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.03em}
+.ticket-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.when{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.when .day{font-family:var(--display);font-weight:900;font-size:clamp(40px,11vw,64px);line-height:.9;text-transform:uppercase}
+.when .time{font-family:var(--display);font-weight:800;font-size:clamp(28px,7vw,40px);color:var(--pink-ink);line-height:.9}
+.fact{min-width:0}
+.fact dt{font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fact dd{margin:2px 0 0;font-weight:600;font-size:16px}
+.vs{display:flex;align-items:center;gap:8px}
+.sw{flex:none;width:16px;height:16px;border-radius:4px;border:1px solid rgba(0,0,0,.2);display:inline-block}
+.small{color:var(--muted);font-size:13px;font-weight:500}
+.perf{border:0;border-top:2px dashed var(--line);margin:0 18px}
+.actions{padding:14px 18px 18px;display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:999px;font:600 14px var(--body);text-decoration:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--pink)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toast{font-size:13px;color:var(--turf);font-weight:600;align-self:center}
+
+/* season */
+.season h2,.extra h2{font-family:var(--display);font-weight:800;font-size:28px;text-transform:uppercase;margin:0;letter-spacing:.02em}
+.season-head{display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.record{display:flex;gap:6px;flex-wrap:wrap}
+.month{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.date{text-align:center;line-height:1}
+.date b{display:block;font-family:var(--display);font-weight:900;font-size:26px}
+.date span{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mid{min-width:0}
+.mid .opp{font-weight:700;display:flex;align-items:baseline;gap:7px}
+.mid .opp .sw{transform:translateY(2px)}
+.mid .meta{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.t{font-family:var(--display);font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.chip.next{background:var(--pink);color:#fff}
+.chip.done{background:var(--line);color:var(--muted)}
+.chip.early{background:var(--turf-soft);color:var(--turf)}
+.chip.late{background:var(--pink-soft);color:var(--pink-ink)}
+.row.past{opacity:.55}
+.row.is-next{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink-soft)}
+.gcal{font-size:12.5px;font-weight:600}
+.break{padding:9px 12px;border-radius:12px;border:1.5px dashed var(--line);color:var(--muted);font-size:13.5px;font-weight:500}
+
+/* extras */
+.extra{display:flex;flex-direction:column;gap:10px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+summary{cursor:pointer;font-weight:700}
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px;margin-top:12px;font-size:13.5px}
+.teams div{display:flex;gap:8px;align-items:center;min-width:0}
+.teams .n{font-variant-numeric:tabular-nums;color:var(--muted);width:20px;flex:none}
+.teams .us{font-weight:700;color:var(--pink-ink)}
+.foot{color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:420px){.ticket-body{grid-template-columns:1fr}.row{grid-template-columns:50px 1fr auto;gap:10px}}
+@media (prefers-reduced-motion:no-preference){.ticket{animation:rise .5s ease-out both}@keyframes rise{from{transform:translateY(8px)}to{transform:none}}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="crest" aria-hidden="true">17</div>
+    <div>
+      <h1>Flamingos</h1>
+      <p>Team 17 · Moroco Orthodontics · SABR BU8 · 2026–27 season</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="next-h">
+    <p class="eyebrow" id="next-h">Next game</p>
+    <article class="ticket" id="ticket">
+      <div class="ticket-top"><span class="lbl" id="t-week">Week 1</span><span class="count" id="t-count">Loading…</span></div>
+      <dl class="ticket-body">
+        <div class="when"><span class="day" id="t-day">Sat Nov 7</span><span class="time" id="t-time">12:00 PM</span></div>
+        <div class="fact"><dt>Against</dt><dd class="vs" id="t-opp">—</dd></div>
+        <div class="fact"><dt>Field</dt><dd id="t-field">—</dd></div>
+        <div class="fact" style="grid-column:1/-1"><dt>Park</dt><dd>Spanish River North 1 <span class="small">· Spanish River Athletic Park, Boca Raton</span></dd></div>
+      </dl>
+      <hr class="perf">
+      <div class="actions">
+        <a class="btn primary" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Spanish+River+Athletic+Park+North+Boca+Raton+FL">Directions</a>
+        <a class="btn" id="t-gcal" target="_blank" rel="noopener" href="#">Add to Google Calendar</a>
+        <button class="btn" id="t-copy" type="button">Copy for group chat</button>
+        <span class="toast" id="toast" role="status"></span>
+      </div>
+    </article>
+  </section>
+
+  <section class="season" aria-labelledby="season-h">
+    <div class="season-head">
+      <h2 id="season-h">Full season</h2>
+      <div class="record" id="summary"></div>
+    </div>
+    <div id="season"></div>
+  </section>
+
+  <section class="extra">
+    <h2>The league</h2>
+    <details>
+      <summary>All 18 BU8 teams and jersey colors</summary>
+      <div class="teams" id="teams"></div>
+    </details>
+  </section>
+
+  <p class="foot" id="netline" hidden></p>
+  <p class="foot">Taken from the official <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSZytSNVMYRNaM6EuYizMUoLy114uZ5n2q_JBvyY1B0MFTHiTEwy3TAxC14YmIRo5KLwyr1sVqIdXo1/pubhtml#gid=0" target="_blank" rel="noopener">SABR BU08 schedule</a> as of Nov 7, 2026. All times are Eastern. Schedules can change for weather, so check with the coach or SABR before you head out.</p>
+</div>
+
+<script>
+const TEAMS={1:["Strikers","Alexa, Sell My House","Black","#1a1a1a"],2:["Ultimate Longevity Center","","Charcoal","#3b4650"],3:["The Bahn Group","","Cobalt","#0047ab"],4:["The Standard","The Standard Boca","Hot Pink","#ff69b4"],5:["Dr. Pam Orthodontics","","Mint","#98e2c6"],6:["DC Construction Associates","","Navy","#1f2a4d"],7:["LemonLawFL.com","","Neon Yellow","#e6ff2e"],8:["Chick-fil-A Palmetto","Chick-fil-A Palmetto Park & I-95","Red","#d7263d"],9:["Supreme Squad","Casabella Designs Inc.","Silver","#c0c0c8"],10:["AC Drain Wiz","","White","#ffffff"],11:["Pasta Fresca","Pasta Fresca Da Giulio","Columbia Blue","#9bc4e2"],12:["3S Sports Card Emporium","","Forest Green","#228b22"],13:["Tucci's Pizza","","Lime","#7ed321"],14:["How Ya Dough'n","","Maroon","#800000"],15:["Boomers","","Orange","#f7811e"],16:["Amwins","","Purple","#6a3fa0"],17:["Flamingos","Moroco Orthodontics","Flamingo","#f7849b"],18:["Retro Home Health","","Turquoise","#30c5c9"]};
+// [week, "YYYY-MM-DD", "HH:MM" (24h, Eastern), field, opponent #]
+const GAMES=[[1,"2026-11-07","12:00","Fields 4 & 5",2],[2,"2026-11-14","12:00","Fields 7 & 8",1],[3,"2026-11-21","15:00","Fields 4 & 5",15],[4,"2026-12-05","09:00","Fields 4 & 5",13],[5,"2026-12-12","12:00","Fields 3 & 6",11],[6,"2027-01-09","13:00","Fields 3 & 6",9],[7,"2027-01-16","14:00","Fields 4 & 5",7],[8,"2027-01-23","09:00","Fields 3 & 6",5],[9,"2027-01-30","11:00","Fields 4 & 5",3],[10,"2027-02-06","13:00","Fields 7 & 8",18],[11,"2027-02-13","13:00","Fields 7 & 8",16],[12,"2027-02-20","09:00","Fields 4 & 5",14],[13,"2027-02-27","12:20","Fields 4 & 5",2]];
+const BREAKS={"2026-12-05":"No game Nov 28 · Thanksgiving weekend","2027-01-09":"Winter break · no games Dec 19 – Jan 2"};
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],MONL=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const GAME_MIN=60;
+const games=GAMES.map(([w,d,t,f,o])=>{const[y,m,dd]=d.split("-").map(Number),[h,mi]=t.split(":").map(Number);
+  // Whole season falls in Eastern Standard Time (UTC-5)
+  return{w,y,m,dd,h,mi,f,o,start:Date.UTC(y,m-1,dd,h+5,mi),dow:new Date(Date.UTC(y,m-1,dd)).getUTCDay()}});
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const p2=n=>String(n).padStart(2,"0");
+const t12=g=>`${(g.h%12)||12}:${p2(g.mi)} ${g.h<12?"AM":"PM"}`;
+const opp=g=>TEAMS[g.o];
+const sw=c=>`<span class="sw" style="background:${c}"></span>`;
+function gcal(g){const z=n=>new Date(n).toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const q=new URLSearchParams({action:"TEMPLATE",text:`Flamingos vs ${opp(g)[0]}`,dates:`${z(g.start)}/${z(g.start+GAME_MIN*6e4)}`,location:`Spanish River North 1 - ${g.f}, Spanish River Athletic Park, Boca Raton, FL`,details:`SABR BU8 week ${g.w}. Opponent jersey: ${opp(g)[2]}.`});
+  return "https://calendar.google.com/calendar/render?"+q}
+function etToday(){const s=new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});return s}
+function countdown(g,now){const diff=g.start-now;
+  if(diff<=0)return"Kickoff! Game on now";
+  const todayKey=etToday(),gk=`${g.y}-${p2(g.m)}-${p2(g.dd)}`;
+  const mins=Math.round(diff/6e4),hrs=Math.floor(mins/60);
+  if(gk===todayKey)return hrs?`Today · in ${hrs}h ${mins%60}m`:`Today · in ${mins} min`;
+  const days=Math.round((Date.UTC(g.y,g.m-1,g.dd)-Date.parse(todayKey+"T00:00:00Z"))/864e5);
+  return days===1?"Tomorrow":`In ${days} days`}
+
+let nextG=null;
+function render(){
+  const now=Date.now();
+  nextG=games.find(g=>now<g.start+GAME_MIN*6e4)||null;
+  const played=games.filter(g=>now>=g.start+GAME_MIN*6e4).length;
+  document.getElementById("summary").innerHTML=`<span class="chip done">${played} played</span><span class="chip next">${games.length-played} to go</span>`;
+  if(nextG){const g=nextG,o=opp(g);
+    document.getElementById("t-week").textContent=`Week ${g.w} of 13${g.w===13?" · season finale":""}`;
+    document.getElementById("t-count").textContent=countdown(g,now);
+    document.getElementById("t-day").textContent=`${DOW[g.dow]} ${MON[g.m-1]} ${g.dd}`;
+    document.getElementById("t-time").textContent=t12(g);
+    document.getElementById("t-opp").innerHTML=`${sw(o[3])}<span>${o[0]} <span class="small">· ${o[2]} jerseys</span></span>`;
+    document.getElementById("t-field").textContent=g.f;
+    document.getElementById("t-gcal").href=gcal(g);
+  }else{
+    document.getElementById("t-week").textContent="Season complete";
+    document.getElementById("t-count").textContent="Thanks for a great year";
+    document.getElementById("t-day").textContent="See you next season";document.getElementById("t-time").textContent="";
+  }
+  let html="",curM=null;
+  games.forEach(g=>{const key=`${g.y}-${p2(g.m)}-${p2(g.dd)}`;
+    if(curM!==g.m){if(curM!==null)html+="</ul>";curM=g.m;html+=`<p class="month">${MONL[g.m-1]} ${g.y}</p><ul class="list">`}
+    if(BREAKS[key])html+=`<li class="break">${BREAKS[key]}</li>`;
+    const o=opp(g),past=now>=g.start+GAME_MIN*6e4,isNext=g===nextG;
+    const chip=isNext?'<span class="chip next">Next</span>':past?'<span class="chip done">Played</span>':g.h<10?'<span class="chip early">Early</span>':g.h>=15?'<span class="chip late">Late</span>':"";
+    const rematch=g.w===13?' <span class="small">(rematch of week 1)</span>':"";
+    html+=`<li class="row${past?" past":""}${isNext?" is-next":""}">
+      <div class="date"><b>${g.dd}</b><span>${DOW[g.dow]}</span></div>
+      <div class="mid"><div class="opp">${sw(o[3])}<span>vs ${o[0]}${rematch}</span></div><div class="meta">Wk ${g.w} · ${g.f} · ${o[2]} jerseys</div>${past?"":`<a class="gcal" target="_blank" rel="noopener" href="${gcal(g)}">+ Google Calendar</a>`}</div>
+      <div class="right"><span class="t">${t12(g)}</span>${chip}</div></li>`});
+  html+="</ul>";
+  document.getElementById("season").innerHTML=html;
+}
+document.getElementById("teams").innerHTML=Object.entries(TEAMS).map(([n,t])=>`<div><span class="n">${n}</span>${sw(t[3])}<span class="${n==17?"us":""}">${t[0]}${t[1]?` <span class="small">(${t[1]})</span>`:""} · ${t[2]}</span></div>`).join("");
+document.getElementById("t-copy").addEventListener("click",async()=>{
+  if(!nextG)return;const g=nextG,o=opp(g);
+  const txt=`Flamingos game: ${DOW[g.dow]} ${MON[g.m-1]} ${g.dd} at ${t12(g)}\nvs ${o[0]} (${o[2]} jerseys)\n${g.f}, Spanish River North 1, Boca Raton`;
+  const toast=document.getElementById("toast");
+  try{await navigator.clipboard.writeText(txt);toast.textContent="Copied. Paste it in the team chat."}
+  catch(e){toast.textContent=txt.replace(/\n/g," · ")}
+  setTimeout(()=>toast.textContent="",6000)});
+render();setInterval(render,60000);
+function net(){const el=document.getElementById("netline");
+  if(!navigator.onLine){el.hidden=false;el.textContent="You're offline. Showing the saved schedule. Directions and Google Calendar links need a connection."}
+  else{el.hidden=true}}
+addEventListener("online",net);addEventListener("offline",net);net();
+if("serviceWorker" in navigator&&location.protocol!=="file:"){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+</script>
+
+</body></html>

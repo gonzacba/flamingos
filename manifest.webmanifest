@@ -1,0 +1,14 @@
+{
+  "name": "Flamingos Game Days",
+  "short_name": "Flamingos",
+  "description": "SABR BU8 Team 17 Flamingos (Moroco Orthodontics) 2026-27 game schedule",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbf6f5",
+  "theme_color": "#e2557f",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
